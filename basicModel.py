@@ -1,7 +1,8 @@
 '''
-@author Nikhil Patil
+@author: Pytorch Team
 @date 2/25/2023
-@description: picking up pytorch today for brickhack9
+@description: picking up pytorch today for brickhack9, this is a basic model that the team provides in order to demonstrate the use of pytorch, so 
+so I tried tolearn from it and understand it.
 '''
 import torch
 from torch import nn
