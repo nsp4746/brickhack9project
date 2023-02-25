@@ -2,3 +2,5 @@
 ## Team members as of 11:18 2/25
 * Nikhil Patil
 * Paolo Pop
+* Max Agri
+* Anna Richardson
