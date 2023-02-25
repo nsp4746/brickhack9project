@@ -1,7 +1,9 @@
 # Brickhack 9 Project
-## Team members as of 11:18 2/25
+## Team members as of 12:30 2/25
 * Nikhil Patil
 * Paolo Pop
+* Max Agri
+* Anna Richardson
 --------
 TastyDrinks
 Target audience: people who want tasty drinks
@@ -18,3 +20,5 @@ Current Steps
 
 
 
+* Max Agri
+* Anna Richardson
