@@ -36,6 +36,9 @@ if __name__ == "__main__":
                                     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])  # Normalizing the data
     batch_size = 4
 
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    print(device)
+
     trainset = torchvision.datasets.CIFAR10(
         root='./data',
         train=True,
@@ -125,7 +128,7 @@ if __name__ == "__main__":
 
 
     net = Net()
-
+    net.to(device)
 
     # 3. Define a loss function and optimizer
     # Using Classification Cross-Entropy loss and SGD with momentum
@@ -142,7 +145,7 @@ if __name__ == "__main__":
 
         running_loss = 0.0
         for i, data in enumerate(trainloader, 0):
-            inputs, labels = data
+            inputs, labels = data[0].to(device), data[1].to(device)
             optimizer.zero_grad()
             outputs = net(inputs)
             loss = criterion(outputs, labels)
@@ -168,6 +171,7 @@ if __name__ == "__main__":
 
     net = Net()
     net.load_state_dict(torch.load(PATH))
+    net.to(device)
 
     outputs = net(images)
     _, predicted = torch.max(outputs, 1)
@@ -177,10 +181,28 @@ if __name__ == "__main__":
     total = 0
     with torch.no_grad():
         for data in testLoader:
-            images, labels = data
+            images, labels = data[0].to(device), data[1].to(device)
             outputs = net(images)
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
-    print(f'Accuracy of the network on the 10000 test images: {100*correct/total:.2f}%')
+    print(f'Accuracy of the network on the 10000 test images: {100*correct/total}%')
 
+    # prepare to count predictions for each class
+    correct_pred = {classname: 0 for classname in classes}
+    total_pred = {classname: 0 for classname in classes}
+    # again with no gradients needed
+    with torch.no_grad():
+        for data in testLoader:
+            images, labels = data[0].to(device), data[1].to(device)
+            outputs = net(images)
+            _, predictions = torch.max(outputs, 1)
+            # collect the correct predictions for each class
+            for label, prediction in zip(labels, predictions):
+                if label == prediction:
+                    correct_pred[classes[label]] += 1
+                total_pred[classes[label]] += 1
+    # print accuracy for each class
+    for classname, correct_count in correct_pred.items():
+        accuracy  = 100 * float(correct_count) / total_pred[classname]
+        print(f'Accuracy for class {classname:5s} is {accuracy :.1f}%')
